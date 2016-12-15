@@ -52,4 +52,4 @@ describe('Bot Tests', () => {
 
 * *exact string*: `in: "string to test"`
 * *regular expression*: `in: /^(starts with string)/i`
-* *function*: `in: (message) => { return message.text.length; }`
+* *function*: `in: (message, assert, callback) => { assert(message.text.length); callback(); }`
