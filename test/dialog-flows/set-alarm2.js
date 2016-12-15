@@ -8,8 +8,9 @@ module.exports = [
     out: "test"
   },
   {
-    in: (message) => {
-      return message && message.text && message.text.startsWith('Creating alarm named "test" for');
+    in: (message, assert, callback) => {
+      assert(message && message.text && message.text.startsWith('Creating alarm named "test" for'));
+      callback();
     }
   },
   {

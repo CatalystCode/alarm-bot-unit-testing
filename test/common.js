@@ -7,28 +7,17 @@ function testBot(bot, messages, done) {
       
     if (step <= messages.length && step++ >= 1) {
       var check = messages[step - 2];
-      if (check.type) {
-        assert(message.type === check.type);
-      }
       
-      if (check.in) {
-        if (check.in.test ? check.in.test(message.text) : message.text === check.in) {
-          assert(true);
-        } else if (typeof check.in === 'function') {
-          assert(check.in(message))
-        } else {
-          console.error('<%s> does not match <%s>', message.text, check.in);
+      checkInMessage(message, check, assert, (err) => {
+
+        if (err) { 
           assert(false);
+          done();
         }
-      }
 
-      if (check.out) {
-        connector.processMessage(check.out);
-      }
-
-      if (step - 1 == messages.length) {
-        setTimeout(done, 10); // Enable message from connector to appear in current test suite
-      }
+        proceedNextStep(check, done);
+      });
+      
     } else {
       assert(false);
       setTimeout(done, 10); // Enable message from connector to appear in current test suite
@@ -38,6 +27,37 @@ function testBot(bot, messages, done) {
   if (messages.length && messages[0].out) {
     step = 2;
     connector.processMessage(messages[0].out)
+  }
+
+  function checkInMessage(message, check, assert, callback) {
+
+    if (check.type) {
+      assert(message.type === check.type);
+    }
+
+    if (typeof check.in === 'function') {
+      return check.in(message, assert, callback);
+    } else {
+      if (check.in) {
+        if (check.in.test ? check.in.test(message.text) : message.text === check.in) {
+          assert(true);
+        } else {
+          console.error('<%s> does not match <%s>', message.text, check.in);
+          assert(false);
+        }
+      }
+      return callback();
+    }
+  }
+
+  function proceedNextStep(check, done) {
+    if (check.out) {
+      connector.processMessage(check.out);
+    }
+
+    if (step - 1 == messages.length) {
+      setTimeout(done, 10); // Enable message from connector to appear in current test suite
+    }
   }
 }
 
