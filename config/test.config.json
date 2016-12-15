@@ -1,0 +1,5 @@
+{
+  "BOT_MicrosoftAppId": "",
+  "BOT_MicrosoftAppPassword": "",
+  "LUIS_modelURL":"https://luis.url?id=appId&subscription-key=subId&q="
+}
